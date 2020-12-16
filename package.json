@@ -9,7 +9,8 @@
 	},
 	"scripts": {
 		"test": "jest --verbose test/*",
-		"watch": "nodemon server.js"
+		"start": "node app.js",
+		"watch": "nodemon app.js"
 	},
 	"repository": {
 		"type": "git",
