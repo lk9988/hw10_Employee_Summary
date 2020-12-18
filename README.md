@@ -22,4 +22,4 @@ This is command-line application for building a software engineering team. It wi
 
 ## License
 
-[![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)]
+![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)

@@ -43,6 +43,7 @@ const employeeTypeQ = [
 	},
 ];
 
+// there concole.logs will appear first
 console.log("Let's build your team");
 console.log("== Please add Manager Info ==");
 
@@ -155,5 +156,5 @@ function renderHTML() {
 	//
 	writeToFile(outputPath, htmlContent);
 }
-// starting
+// starting app
 askManagerInfo();
