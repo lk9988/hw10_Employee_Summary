@@ -10,74 +10,30 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const { throws } = require("assert");
+const { extname } = require("path");
+// why these too appear out of blue?
+
 const employeeList = [];
 
-const managerQ = [
-	{
-		type: "input",
-		message: "What is your manager's name?",
-		name: "name",
-	},
-	{
-		type: "input",
-		message: "What is your manager's ID?",
-		name: "id",
-	},
-	{
-		type: "input",
-		message: "What is your manager's Email?",
-		name: "email",
-	},
-	{
-		type: "input",
-		message: "What is your manager's Office Number?",
-		name: "officeNumber",
-	},
+class Question {
+	constructor(type, message, name) {
+		this.type = type;
+		this.message = message;
+		this.name = name;
+	}
+}
+
+const employeeQ = [
+	new Question("input", "What is your new employee's name?", "name"),
+	new Question(
+		"input",
+		"What is your" + "What is your new employee's id?",
+		"id"
+	),
+	new Question("input", "What is your new employee's email?", "email"),
 ];
-const engineerQ = [
-	{
-		type: "input",
-		message: "What is your engineer's name?",
-		name: "name",
-	},
-	{
-		type: "input",
-		message: "What is your engineer's ID?",
-		name: "id",
-	},
-	{
-		type: "input",
-		message: "What is your engineer's Email?",
-		name: "email",
-	},
-	{
-		type: "input",
-		message: "What is your engineers Github username?",
-		name: "github",
-	},
-];
-const internQ = [
-	{
-		type: "input",
-		message: "What is your intern's name?",
-		name: "name",
-	},
-	{
-		type: "input",
-		message: "What is your intern's ID?",
-		name: "id",
-	},
-	{
-		type: "input",
-		message: "What is your intern's Email?",
-		name: "email",
-	},
-	{
-		type: "input",
-		message: "What is your inter's School?",
-		name: "school",
-	},
-];
+
 const employeeTypeQ = [
 	{
 		type: "list",
@@ -90,21 +46,34 @@ const employeeTypeQ = [
 		],
 	},
 ];
-console.log("please build your team");
+
+// console.log(managerQ);
+console.log("Let's build your team");
+console.log("== Please add Manager Info ==");
+
 // ASK user for manager info
 function askManagerInfo() {
-	return inquirer.prompt(managerQ).then((managerData) => {
-		// console.log("Please build your new team!");
-		const newManager = new Manager(
-			managerData.name,
-			managerData.id,
-			managerData.email,
-			managerData.officeNumber
-		);
-		employeeList.push(newManager);
-		// console.log(employeeList);
-		askNextEmployeeType();
-	});
+	return inquirer
+		.prompt(
+			(managerQ = employeeQ.concat([
+				{
+					type: "input",
+					message: "What is your Manager's Office Number?",
+					name: "officeNumber",
+				},
+			]))
+		)
+		.then((managerData) => {
+			const newManager = new Manager(
+				managerData.name,
+				managerData.id,
+				managerData.email,
+				managerData.officeNumber
+			);
+
+			employeeList.push(newManager);
+			askNextEmployeeType();
+		});
 }
 // ASK user for next employee type
 function askNextEmployeeType() {
@@ -112,13 +81,15 @@ function askNextEmployeeType() {
 		// if user selected Engineer
 		if (newChoiceData.addingNew === "Engineer") {
 			console.log("=====================================================");
-			console.log(newChoiceData);
+
+			console.log("==  Please add new " + `${newChoiceData.addingNew}`);
 			askEngineerInfo();
 		}
 		// if user selected Intern
-		if (newChoiceData.addingNew === "Intern") {
+		else if (newChoiceData.addingNew === "Intern") {
 			console.log("=====================================================");
-			console.log(newChoiceData);
+
+			console.log("==  Please add new " + `${newChoiceData.addingNew}`);
 			askInternInfo();
 		}
 		// Else, when user does not want to add more people
@@ -130,41 +101,63 @@ function askNextEmployeeType() {
 
 // ASK user for engineer info
 function askEngineerInfo() {
-	return inquirer.prompt(engineerQ).then((engineerData) => {
-		const newEngineer = new Engineer(
-			engineerData.name,
-			engineerData.id,
-			engineerData.email,
-			engineerData.github
-		);
-		employeeList.push(newEngineer);
-		askNextEmployeeType();
-	});
+	return inquirer
+		.prompt(
+			(engineerQ = employeeQ.concat([
+				{
+					type: "input",
+					message: "What is your Engineers Github username?",
+					name: "github",
+				},
+			]))
+		)
+		.then((engineerData) => {
+			const newEngineer = new Engineer(
+				engineerData.name,
+				engineerData.id,
+				engineerData.email,
+				engineerData.github
+			);
+			//
+			employeeList.push(newEngineer);
+			askNextEmployeeType();
+		});
 }
 // ASK user for intern info
 function askInternInfo() {
-	return inquirer.prompt(internQ).then((internData) => {
-		const newIntern = new Intern(
-			internData.name,
-			internData.id,
-			internData.email,
-			internData.school
-		);
-		employeeList.push(newIntern);
-		askNextEmployeeType();
-	});
+	return inquirer
+		.prompt(
+			(internQ = employeeQ.concat([
+				{
+					type: "input",
+					message: "What is your Intern's School?",
+					name: "school",
+				},
+			]))
+		)
+		.then((internData) => {
+			const newIntern = new Intern(
+				internData.name,
+				internData.id,
+				internData.email,
+				internData.school
+			);
+			//
+			employeeList.push(newIntern);
+			askNextEmployeeType();
+		});
 }
 function writeToFile(fileName, data) {
 	fs.writeFile(fileName, data, (err) => {
 		if (err) throw err;
-		// console.log(
-		// 	"You have New Team for your Project! Check your Output Folder! "
-		// );
-		// WHY this message  appear after choosing Engineer?
+		console.log(
+			"**** You have New Team for your Project! Check your Output Folder! ****"
+		);
 	});
 }
 function renderHTML() {
 	const htmlContent = render(employeeList);
+	//
 	writeToFile(outputPath, htmlContent);
 }
 // starting
