@@ -10,10 +10,6 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-const { throws } = require("assert");
-const { extname } = require("path");
-// why these too appear out of blue?
-
 const employeeList = [];
 
 class Question {
@@ -47,7 +43,6 @@ const employeeTypeQ = [
 	},
 ];
 
-// console.log(managerQ);
 console.log("Let's build your team");
 console.log("== Please add Manager Info ==");
 
